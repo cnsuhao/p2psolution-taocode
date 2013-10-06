@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="ThirdParty/enet"
+				AdditionalIncludeDirectories="Common/;ThirdParty/enet/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -183,11 +183,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Common\SoBaseTypeDefine.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Common\SoConsoleHelp.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Common\SoConsoleHelp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Common\SoP2PDefine.h"
 				>
 			</File>
 		</Filter>
@@ -204,6 +212,22 @@
 			</File>
 			<File
 				RelativePath=".\P2PServer\SoP2PServerManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\P2PServer\SoPeerForServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\P2PServer\SoPeerForServer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\P2PServer\SoPeerMonitorServer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\P2PServer\SoPeerMonitorServer.h"
 				>
 			</File>
 		</Filter>
