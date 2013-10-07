@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="Common/;ThirdParty/enet/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -60,7 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="enet_d.lib ws2_32.lib winmm.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="ThirdParty/enet/"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -166,22 +169,52 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			Name="Common"
 			>
+			<File
+				RelativePath=".\Common\GGUIStringHelp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Common\GGUIStringHelp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Common\SoBaseTypeDefine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Common\SoConsoleHelp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Common\SoConsoleHelp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Common\SoP2PDefine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Common\SoP2PProtocol.h"
+				>
+			</File>
 		</Filter>
 		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			Name="P2PClient"
 			>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
+			<File
+				RelativePath=".\P2PClient\MainApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\P2PClient\SoP2PClientManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\P2PClient\SoP2PClientManager.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

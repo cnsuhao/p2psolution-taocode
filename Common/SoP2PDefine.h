@@ -10,6 +10,9 @@ using namespace GGUI;
 //-----------------------------------------------------------------------------
 typedef soint32 SoPeerID;
 const SoPeerID SoPeerID_Invalid = -1;
+
+typedef soint64 SoClientID;
+const SoClientID SoClientID_Invalid = -1;
 //-----------------------------------------------------------------------------
 #endif //_SoP2PDefine_h_
 //-----------------------------------------------------------------------------

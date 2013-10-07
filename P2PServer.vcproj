@@ -63,7 +63,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="enet_d.lib ws2_32.lib winmm.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="ThirdParty/enet"
+				AdditionalLibraryDirectories="ThirdParty/enet/"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -196,6 +196,10 @@
 			</File>
 			<File
 				RelativePath=".\Common\SoP2PDefine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Common\SoP2PProtocol.h"
 				>
 			</File>
 		</Filter>
