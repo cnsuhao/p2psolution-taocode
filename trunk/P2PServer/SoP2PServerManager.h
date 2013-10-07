@@ -25,6 +25,9 @@ private:
 	//从m_pPeerList中找一个空元素，返回该元素的索引位置。
 	//如果没有空元素，说明列表已满，则返回无效值。
 	SoPeerID GenerateNewPeerID();
+	void AddClientIDPeerID(SoClientID _ClientID, SoPeerID _PeerID);
+	void RemoveClientIDPeerID(SoClientID _ClientID, SoPeerID _PeerID);
+	SoPeerID GetPeerIDByClientID(SoClientID _ClientID);
 
 private:
 	//本Server的生命期状态。
@@ -35,12 +38,20 @@ private:
 		LifeStep_Finishing, //外界要求结束Server的运行，正在关闭中。
 		LifeStep_Finished, //已经结束。
 	};
-
+	//这个结构体用于根据SoClientID获取SoPeerID。
+	struct stClientID2PeerID
+	{
+		SoClientID theClientID;
+		SoPeerID thePeerID;
+		stClientID2PeerID() : theClientID(SoClientID_Invalid), thePeerID(SoPeerID_Invalid) {};
+		bool IsEmpty() { return (theClientID==SoClientID_Invalid && thePeerID==SoPeerID_Invalid); };
+		void Clear() { theClientID = SoClientID_Invalid; thePeerID = SoPeerID_Invalid; };
+	};
 private:
 	static SoP2PServerManager* ms_pInstance;
 private:
 	//服务器Host对象。
-	ENetHost* m_Host;
+	ENetHost* m_pHost;
 	//记录本进程的IP和端口。
 	ENetAddress m_Address;
 	//记录生命期阶段。
@@ -49,6 +60,10 @@ private:
 	SoPeerForServer* m_pPeerList;
 	//PeerList的最大容量。
 	soint32 m_nPeerListMaxSize;
+	//维护从SoClinetID到SoPeerID的映射。
+	//数组中元素的个数是m_nPeerListMaxSize。
+	//通过一种算法规则把SoClientID变换为下标索引。
+	stClientID2PeerID* m_pClientID2PeerID;
 };
 //--------------------------------------------------------------------
 inline SoP2PServerManager* SoP2PServerManager::GetInstance()
