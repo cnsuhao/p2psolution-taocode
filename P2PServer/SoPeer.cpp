@@ -2,24 +2,28 @@
 // (C) oil
 // 2013-10-06
 //--------------------------------------------------------------------
-#include "SoPeerForServer.h"
+#include "SoPeer.h"
 //--------------------------------------------------------------------
-SoPeerForServer::SoPeerForServer()
-:m_myPeerID(SoPeerID_Invalid)
-,m_pPeer(0)
+SoPeer::SoPeer()
+:m_ClientID(Invalid_SoClientID)
+,m_PeerIndex(Invalid_SoPeerIndex)
+,m_pENetPeer(0)
 {
 
 }
 //--------------------------------------------------------------------
-SoPeerForServer::~SoPeerForServer()
+SoPeer::~SoPeer()
 {
-
+	m_ClientID = Invalid_SoClientID;
+	m_PeerIndex = Invalid_SoPeerIndex;
+	m_pENetPeer = 0;
 }
 //--------------------------------------------------------------------
-void SoPeerForServer::InitPeer(SoPeerID theID, ENetPeer* pPeer)
+void SoPeer::InitPeer(SoClientID theClientID, SoPeerIndex theIndex, ENetPeer* pENetPeer)
 {
-	m_myPeerID = theID;
-	m_pPeer = pPeer;
+	m_ClientID = theClientID;
+	m_PeerIndex = theIndex;
+	m_pENetPeer = pENetPeer;
 
 	/*
 	ENetAddress remote=theEvent.peer->address; //Ô¶³ÌµØÖ·

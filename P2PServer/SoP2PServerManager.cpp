@@ -4,11 +4,11 @@
 //--------------------------------------------------------------------
 #include <stdio.h>
 #include "SoP2PServerManager.h"
-#include "SoPeerForServer.h"
+#include "SoPeer.h"
 //--------------------------------------------------------------------
 //最大连接数目
 //ENet源码中规定了最大连接数目是(ENET_PROTOCOL_MAXIMUM_PEER_ID = 0xFFF)
-const int gMaxPeerCount = 64;
+const soint64 gMaxPeerCount = 64;
 //最大通道数目
 const int gMaxChannelCount = 12;
 //最大下载带宽，单位bytes/second。值为0表示不限制。
@@ -23,7 +23,6 @@ SoP2PServerManager::SoP2PServerManager()
 ,m_eLifeStep(LifeStep_Starting)
 ,m_pPeerList(0)
 ,m_nPeerListMaxSize(0)
-,m_pClientID2PeerID(0)
 {
 	ms_pInstance = this;
 }
@@ -58,9 +57,7 @@ bool SoP2PServerManager::InitP2PServerManager()
 	}
 	//为PeerList分配内存空间。
 	m_nPeerListMaxSize = gMaxPeerCount;
-	m_pPeerList = new SoPeerForServer[m_nPeerListMaxSize];
-	//创建m_pClientID2PeerID映射数组。
-	m_pClientID2PeerID = new stClientID2PeerID[m_nPeerListMaxSize];
+	m_pPeerList = new SoPeer[m_nPeerListMaxSize];
 	//
 	printf("SoP2PServerManager::InitP2PServerManager() success!\n");
 	return true;
@@ -68,11 +65,6 @@ bool SoP2PServerManager::InitP2PServerManager()
 //--------------------------------------------------------------------
 void SoP2PServerManager::ReleaseP2PServerManager()
 {
-	if (m_pClientID2PeerID)
-	{
-		delete [] m_pClientID2PeerID;
-		m_pClientID2PeerID = 0;
-	}
 	if (m_pPeerList)
 	{
 		delete [] m_pPeerList;
@@ -110,20 +102,24 @@ void SoP2PServerManager::P2PServerRun()
 		{
 			if (theEvent.type == ENET_EVENT_TYPE_CONNECT) //有客户端连接成功
 			{
-				SoPeerID newPeerID = GenerateNewPeerID();
-				if (newPeerID == SoPeerID_Invalid)
-				{
-					//PeerList容器已满，达到连接上限。
-					//通知这个客户端达到连接上限。
-					//通知MonitorServer达到连接上限。
-				}
-				else
-				{
-					//把newPeerID保存在theEvent.peer的自定义数据内，
-					//让theEvent.peer知道自己在PeerList中的索引地址。
-					theEvent.peer->data = (void*)newPeerID;
-					m_pPeerList[newPeerID].InitPeer(newPeerID, theEvent.peer);
-				}
+				//什么都不做。等待客户端发送逻辑上的正式请求连接。
+				//当收到正式请求连接后，再为其分配一个Peer对象。
+
+
+				//SoPeerIndex newPeerID = FindEmptyPeer();
+				//if (newPeerID == Invalid_SoPeerIndex)
+				//{
+				//	//PeerList容器已满，达到连接上限。
+				//	//通知这个客户端达到连接上限。
+				//	//通知MonitorServer达到连接上限。
+				//}
+				//else
+				//{
+				//	//把newPeerID保存在theEvent.peer的自定义数据内，
+				//	//让theEvent.peer知道自己在PeerList中的索引地址。
+				//	theEvent.peer->data = (void*)newPeerID;
+				//	m_pPeerList[newPeerID].InitPeer(newPeerID, theEvent.peer);
+				//}
 			}
 			else if (theEvent.type == ENET_EVENT_TYPE_RECEIVE) //收到数据
 			{
@@ -151,78 +147,52 @@ void SoP2PServerManager::P2PServerRun()
 	}
 }
 //--------------------------------------------------------------------
-SoPeerID SoP2PServerManager::GenerateNewPeerID()
+SoPeerIndex SoP2PServerManager::FindEmptyPeer(const SoClientID _ClientID) const
 {
-	static SoPeerID s_PeerID = -1;
-	SoPeerID theID = SoPeerID_Invalid;
-	for (soint32 i=0; i<m_nPeerListMaxSize; ++i)
+	SoPeerIndex nResult = Invalid_SoPeerIndex;
+	if (_ClientID == Invalid_SoClientID)
 	{
-		++s_PeerID;
-		if (s_PeerID >= m_nPeerListMaxSize)
+		return nResult;
+	}
+	//
+	const soint64 nMaxCount = m_nPeerListMaxSize;
+	soint64 nIndex = _ClientID % nMaxCount;
+	for (soint64 i=0; i<nMaxCount; ++i)
+	{
+		nIndex += i;
+		if (nIndex >= nMaxCount)
 		{
-			s_PeerID -= m_nPeerListMaxSize;
+			nIndex -= nMaxCount;
 		}
-		if (m_pPeerList[s_PeerID].IsEmpty())
+		if (m_pPeerList[nIndex].IsEmpty())
 		{
-			theID = s_PeerID;
+			nResult = nIndex;
 			break;
 		}
 	}
-	return theID;
+	return nResult;
 }
 //--------------------------------------------------------------------
-void SoP2PServerManager::AddClientIDPeerID(SoClientID _ClientID, SoPeerID _PeerID)
+SoPeerIndex SoP2PServerManager::FindPeerByClientID(const SoClientID _ClientID) const
 {
-	soint32 nIndex = (soint32)(_ClientID % m_nPeerListMaxSize);
-	for (soint32 i=0; i<m_nPeerListMaxSize; ++i)
+	SoPeerIndex nResult = Invalid_SoPeerIndex;
+	if (_ClientID == Invalid_SoClientID)
 	{
-		nIndex += i;
-		if (nIndex >= m_nPeerListMaxSize)
-		{
-			nIndex -= m_nPeerListMaxSize;
-		}
-		if (m_pClientID2PeerID[nIndex].IsEmpty())
-		{
-			m_pClientID2PeerID[nIndex].theClientID = _ClientID;
-			m_pClientID2PeerID[nIndex].thePeerID = _PeerID;
-			break;
-		}
+		return nResult;
 	}
-}
-//--------------------------------------------------------------------
-void SoP2PServerManager::RemoveClientIDPeerID(SoClientID _ClientID, SoPeerID _PeerID)
-{
-	soint32 nIndex = (soint32)(_ClientID % m_nPeerListMaxSize);
-	for (soint32 i=0; i<m_nPeerListMaxSize; ++i)
+	//
+	const soint64 nMaxCount = m_nPeerListMaxSize;
+	soint64 nIndex = _ClientID % nMaxCount;
+	for (soint64 i=0; i<nMaxCount; ++i)
 	{
 		nIndex += i;
-		if (nIndex >= m_nPeerListMaxSize)
+		if (nIndex >= nMaxCount)
 		{
-			nIndex -= m_nPeerListMaxSize;
+			nIndex -= nMaxCount;
 		}
-		if (m_pClientID2PeerID[nIndex].theClientID == _ClientID
-			&& m_pClientID2PeerID[nIndex].thePeerID == _PeerID)
+		if (m_pPeerList[nIndex].GetClientID() == _ClientID)
 		{
-			m_pClientID2PeerID[nIndex].Clear();
-			break;
-		}
-	}
-}
-//--------------------------------------------------------------------
-SoPeerID SoP2PServerManager::GetPeerIDByClientID(SoClientID _ClientID)
-{
-	SoPeerID nResult = SoPeerID_Invalid;
-	soint32 nIndex = (soint32)(_ClientID % m_nPeerListMaxSize);
-	for (soint32 i=0; i<m_nPeerListMaxSize; ++i)
-	{
-		nIndex += i;
-		if (nIndex >= m_nPeerListMaxSize)
-		{
-			nIndex -= m_nPeerListMaxSize;
-		}
-		if (m_pClientID2PeerID[nIndex].theClientID == _ClientID)
-		{
-			nResult = m_pClientID2PeerID[nIndex].thePeerID;
+			nResult = nIndex;
 			break;
 		}
 	}
