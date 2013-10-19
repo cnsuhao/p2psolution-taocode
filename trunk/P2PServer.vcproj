@@ -219,11 +219,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\P2PServer\SoPeerForServer.cpp"
+				RelativePath=".\P2PServer\SoPeer.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\P2PServer\SoPeerForServer.h"
+				RelativePath=".\P2PServer\SoPeer.h"
 				>
 			</File>
 			<File

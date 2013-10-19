@@ -5,9 +5,9 @@
 #ifndef _SoP2PServerManager_h_
 #define _SoP2PServerManager_h_
 //--------------------------------------------------------------------
-#include "SoP2PDefine.h"
 #include "enet/enet.h"
-class SoPeerForServer;
+#include "SoP2PDefine.h"
+class SoPeer;
 //--------------------------------------------------------------------
 class SoP2PServerManager
 {
@@ -24,10 +24,9 @@ public:
 private:
 	//从m_pPeerList中找一个空元素，返回该元素的索引位置。
 	//如果没有空元素，说明列表已满，则返回无效值。
-	SoPeerID GenerateNewPeerID();
-	void AddClientIDPeerID(SoClientID _ClientID, SoPeerID _PeerID);
-	void RemoveClientIDPeerID(SoClientID _ClientID, SoPeerID _PeerID);
-	SoPeerID GetPeerIDByClientID(SoClientID _ClientID);
+	SoPeerIndex FindEmptyPeer(const SoClientID _ClientID) const;
+	//根据SoClientID找到这个客户端的Peer对象。
+	SoPeerIndex FindPeerByClientID(const SoClientID _ClientID) const;
 
 private:
 	//本Server的生命期状态。
@@ -38,15 +37,7 @@ private:
 		LifeStep_Finishing, //外界要求结束Server的运行，正在关闭中。
 		LifeStep_Finished, //已经结束。
 	};
-	//这个结构体用于根据SoClientID获取SoPeerID。
-	struct stClientID2PeerID
-	{
-		SoClientID theClientID;
-		SoPeerID thePeerID;
-		stClientID2PeerID() : theClientID(SoClientID_Invalid), thePeerID(SoPeerID_Invalid) {};
-		bool IsEmpty() { return (theClientID==SoClientID_Invalid && thePeerID==SoPeerID_Invalid); };
-		void Clear() { theClientID = SoClientID_Invalid; thePeerID = SoPeerID_Invalid; };
-	};
+
 private:
 	static SoP2PServerManager* ms_pInstance;
 private:
@@ -57,13 +48,9 @@ private:
 	//记录生命期阶段。
 	eServerLifeStep m_eLifeStep;
 	//维护一个Peer列表，存放所有与本服务器相连接的客户端信息。
-	SoPeerForServer* m_pPeerList;
+	SoPeer* m_pPeerList;
 	//PeerList的最大容量。
-	soint32 m_nPeerListMaxSize;
-	//维护从SoClinetID到SoPeerID的映射。
-	//数组中元素的个数是m_nPeerListMaxSize。
-	//通过一种算法规则把SoClientID变换为下标索引。
-	stClientID2PeerID* m_pClientID2PeerID;
+	soint64 m_nPeerListMaxSize;
 };
 //--------------------------------------------------------------------
 inline SoP2PServerManager* SoP2PServerManager::GetInstance()
