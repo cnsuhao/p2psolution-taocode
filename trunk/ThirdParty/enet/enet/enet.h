@@ -293,7 +293,7 @@ typedef struct _ENetPeer
    enet_uint16   incomingUnsequencedGroup;
    enet_uint16   outgoingUnsequencedGroup;
    enet_uint32   unsequencedWindow [ENET_PEER_UNSEQUENCED_WINDOW_SIZE / 32]; 
-   enet_uint32   eventData;
+   SoENetUserData eventData;
 } ENetPeer;
 
 /** An ENet packet compressor for compressing UDP packets before socket sends or receives.
@@ -404,7 +404,7 @@ typedef struct _ENetEvent
    ENetEventType        type;      /**< type of the event */
    ENetPeer *           peer;      /**< peer that generated a connect, disconnect or receive event */
    enet_uint8           channelID; /**< channel on the peer that generated the event, if appropriate */
-   enet_uint32          data;      /**< data associated with the event, if appropriate */
+   SoENetUserData       UserData;      /**< data associated with the event, if appropriate */
    ENetPacket *         packet;    /**< packet associated with the event, if appropriate */
 } ENetEvent;
 
@@ -507,7 +507,7 @@ ENET_API enet_uint32  enet_crc32 (const ENetBuffer *, size_t);
                 
 ENET_API ENetHost * enet_host_create (const ENetAddress *, size_t, size_t, enet_uint32, enet_uint32);
 ENET_API void       enet_host_destroy (ENetHost *);
-ENET_API ENetPeer * enet_host_connect (ENetHost *, const ENetAddress *, size_t, enet_uint32);
+ENET_API ENetPeer * enet_host_connect (ENetHost *, const ENetAddress *, size_t, const SoENetUserData*);
 ENET_API int        enet_host_check_events (ENetHost *, ENetEvent *);
 ENET_API int        enet_host_service (ENetHost *, ENetEvent *, enet_uint32);
 ENET_API void       enet_host_flush (ENetHost *);
@@ -524,9 +524,9 @@ ENET_API void                enet_peer_ping (ENetPeer *);
 ENET_API void                enet_peer_ping_interval (ENetPeer *, enet_uint32);
 ENET_API void                enet_peer_timeout (ENetPeer *, enet_uint32, enet_uint32, enet_uint32);
 ENET_API void                enet_peer_reset (ENetPeer *);
-ENET_API void                enet_peer_disconnect (ENetPeer *, enet_uint32);
-ENET_API void                enet_peer_disconnect_now (ENetPeer *, enet_uint32);
-ENET_API void                enet_peer_disconnect_later (ENetPeer *, enet_uint32);
+ENET_API void                enet_peer_disconnect (ENetPeer *, const SoENetUserData*);
+ENET_API void                enet_peer_disconnect_now (ENetPeer *, const SoENetUserData*);
+ENET_API void                enet_peer_disconnect_later (ENetPeer *, const SoENetUserData*);
 ENET_API void                enet_peer_throttle_configure (ENetPeer *, enet_uint32, enet_uint32, enet_uint32);
 extern int                   enet_peer_throttle (ENetPeer *, enet_uint32);
 extern void                  enet_peer_reset_queues (ENetPeer *);
@@ -543,6 +543,12 @@ ENET_API size_t enet_range_coder_compress (void *, const ENetBuffer *, size_t, s
 ENET_API size_t enet_range_coder_decompress (void *, const enet_uint8 *, size_t, enet_uint8 *, size_t);
    
 extern size_t enet_protocol_command_size (enet_uint8);
+
+extern void SoENetUserData_Clear(SoENetUserData* pUserData);
+extern void SoENetUserData_Copy(SoENetUserData* pDest, const SoENetUserData* pSrc);
+//本地字节序与网络字节序的互换。
+extern void SoENetUserData_Host2Net(const SoENetUserData* pIn, SoENetUserData* pOut);
+extern void SoENetUserData_Net2Host(const SoENetUserData* pIn, SoENetUserData* pOut);
 
 #ifdef __cplusplus
 }

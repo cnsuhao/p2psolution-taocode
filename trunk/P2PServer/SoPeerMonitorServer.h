@@ -5,8 +5,7 @@
 #ifndef _SoPeerMonitorServer_h_
 #define _SoPeerMonitorServer_h_
 //--------------------------------------------------------------------
-#include "SoP2PDefine.h"
-#include "enet/enet.h"
+#include "SoP2PServerDefine.h"
 //--------------------------------------------------------------------
 class SoPeerMonitorServer
 {

@@ -98,7 +98,7 @@ typedef struct _ENetProtocolConnect
    enet_uint32 packetThrottleAcceleration;
    enet_uint32 packetThrottleDeceleration;
    enet_uint32 connectID;
-   enet_uint32 data;
+   SoENetUserData ConnectUserData;
 } ENET_PACKED ENetProtocolConnect;
 
 typedef struct _ENetProtocolVerifyConnect
@@ -136,7 +136,7 @@ typedef struct _ENetProtocolThrottleConfigure
 typedef struct _ENetProtocolDisconnect
 {
    ENetProtocolCommandHeader header;
-   enet_uint32 data;
+   SoENetUserData DisconnectUserData;
 } ENET_PACKED ENetProtocolDisconnect;
 
 typedef struct _ENetProtocolPing

@@ -208,6 +208,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\P2PClient\SoP2PClientDefine.h"
+				>
+			</File>
+			<File
 				RelativePath=".\P2PClient\SoP2PClientManager.cpp"
 				>
 			</File>

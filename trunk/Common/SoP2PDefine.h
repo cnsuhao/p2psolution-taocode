@@ -6,6 +6,7 @@
 #define _SoP2PDefine_h_
 //-----------------------------------------------------------------------------
 #include "SoBaseTypeDefine.h"
+#include "enet/enet.h"
 using namespace GGUI;
 //-----------------------------------------------------------------------------
 //当客户端登录到GameServer时，GameServer负责为客户端分配一个ClientID。
@@ -15,10 +16,6 @@ using namespace GGUI;
 typedef soint64 SoClientID;
 const SoClientID Invalid_SoClientID = -1;
 
-//当客户端登录到P2PServer后，P2PServer会为其分配一个Peer对象，
-//该Peer对象在Peer数组中的下标即为SoPeerIndex。
-typedef soint64 SoPeerIndex;
-const SoPeerIndex Invalid_SoPeerIndex = -1;
 //-----------------------------------------------------------------------------
 #endif //_SoP2PDefine_h_
 //-----------------------------------------------------------------------------

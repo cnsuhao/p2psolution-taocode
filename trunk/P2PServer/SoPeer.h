@@ -5,22 +5,26 @@
 #ifndef _SoPeer_h_
 #define _SoPeer_h_
 //--------------------------------------------------------------------
-#include "enet/enet.h"
-#include "SoP2PDefine.h"
+#include "SoP2PServerDefine.h"
 //--------------------------------------------------------------------
 class SoPeer
 {
 public:
 	SoPeer();
 	~SoPeer();
-
+	//初始化Peer对象
 	void InitPeer(SoClientID theClientID, SoPeerIndex theIndex, ENetPeer* pENetPeer);
-	//
+	//把Peer对象清零
+	void ReleasePeer();
+	//获取客户端ID
 	SoClientID GetClientID() const;
+	//获取SoPeerIndex
 	SoPeerIndex GetPeerIndex() const;
-	//如果本对象尚未填充有效数据，则返回true。
+	//获取ENetPeer对象指针
+	ENetPeer* GetENetPeer() const;
+	//判断本对象是否为空对象，即尚未填充有效数据。
+	//如果尚未填充有效数据，则返回true。
 	bool IsEmpty() const;
-
 
 private:
 	SoClientID m_ClientID;
@@ -36,6 +40,11 @@ inline SoClientID SoPeer::GetClientID() const
 inline SoPeerIndex SoPeer::GetPeerIndex() const
 {
 	return m_PeerIndex;
+}
+//--------------------------------------------------------------------
+inline ENetPeer* SoPeer::GetENetPeer() const
+{
+	return m_pENetPeer;
 }
 //--------------------------------------------------------------------
 inline bool SoPeer::IsEmpty() const
