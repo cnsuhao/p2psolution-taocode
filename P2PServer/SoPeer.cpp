@@ -5,22 +5,22 @@
 #include "SoPeer.h"
 //--------------------------------------------------------------------
 SoPeer::SoPeer()
-:m_ClientID(Invalid_SoClientID)
-,m_PeerIndex(Invalid_SoPeerIndex)
-,m_pENetPeer(0)
+:m_pENetPeer(0)
 {
-
+	ReleasePeer();
 }
 //--------------------------------------------------------------------
 SoPeer::~SoPeer()
 {
-	m_ClientID = Invalid_SoClientID;
-	m_PeerIndex = Invalid_SoPeerIndex;
-	m_pENetPeer = 0;
+	ReleasePeer();
 }
 //--------------------------------------------------------------------
 void SoPeer::InitPeer(SoClientID theClientID, SoPeerIndex theIndex, ENetPeer* pENetPeer)
 {
+	//把SoPeerIndex保存在pENetPeer的自定义数据内，
+	//让pENetPeer知道自己在PeerList中的索引地址。
+	pENetPeer->data = (void*)theIndex;
+	//为成员变量赋值。
 	m_ClientID = theClientID;
 	m_PeerIndex = theIndex;
 	m_pENetPeer = pENetPeer;
@@ -32,5 +32,16 @@ void SoPeer::InitPeer(SoClientID theClientID, SoPeerIndex theIndex, ENetPeer* pE
 	//cout <<"ip:" <<ip <<" 已经连接,序号:" <<num <<endl;
 	//theEvent.peer->data=(void*)num++;
 	*/
+}
+//--------------------------------------------------------------------
+void SoPeer::ReleasePeer()
+{
+	m_ClientID = Invalid_SoClientID;
+	m_PeerIndex = Invalid_SoPeerIndex;
+	if (m_pENetPeer)
+	{
+		m_pENetPeer->data = 0;
+		m_pENetPeer = 0;
+	}
 }
 //--------------------------------------------------------------------

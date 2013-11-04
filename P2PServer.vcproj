@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="Common/;ThirdParty/enet/"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;$(NOINHERIT)"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -118,7 +118,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="ThirdParty/enet"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;$(NOINHERIT)"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -175,6 +175,14 @@
 			Name="Common"
 			>
 			<File
+				RelativePath=".\Common\GGUILogAsyn.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Common\GGUILogAsyn.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Common\GGUIStringHelp.cpp"
 				>
 			</File>
@@ -208,6 +216,10 @@
 			>
 			<File
 				RelativePath=".\P2PServer\MainApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\P2PServer\SoP2PServerDefine.h"
 				>
 			</File>
 			<File
